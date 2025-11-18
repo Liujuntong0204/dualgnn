@@ -5,7 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.utils import dropout_adj
-from torch_geometric.utils import scatter_
+# from torch_geometric.utils import scatter_
+from torch_scatter import scatter
 from torch.nn import Parameter
 from Basicgcn import Base_gcn
 import pdb
@@ -250,7 +251,7 @@ class DualGNN(torch.nn.Module):
     def forward(self, user_nodes, pos_item_nodes, neg_item_nodes,user_graph,user_weight_matrix,user_cons=None):
         # edge_index, _ = dropout_adj(self.edge_index, edge_attr=None, p=self.dropout)
         if self.dataset == 'tiktok' or self.dataset=='tiktok_new':
-            self.t_feat = scatter_('mean',self.word_embedding(self.word_tensor[1]),self.word_tensor[0]).to(self.device)
+            self.t_feat = scatter('mean',self.word_embedding(self.word_tensor[1]),self.word_tensor[0]).to(self.device)
 
 
         self.v_rep, self.v_preference = self.v_gcn(self.edge_index_dropv,self.edge_index,self.v_feat)
